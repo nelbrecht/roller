@@ -1,0 +1,28 @@
+#!/bin/ksh
+
+#wildfly="/home/wildfly/wildfly-16.0.0.Final"
+#wildfly="/home/wildfly/wildfly-26.0.1.Final"
+wildfly="/home/wildfly/wildfly-34.0.0.Final"
+cli="${wildfly}/bin/jboss-cli.sh --connect"
+startup="${wildfly}/bin/standalone.sh"
+
+daemon="${startup}"
+daemon_timeout=60
+daemon_user=wildfly
+
+. /etc/rc.d/rc.subr
+
+pexp="/bin/sh ${daemon}${daemon_flags:+ ${daemon_flags}}"
+rc_bg=YES
+
+export JBOSS_JAVA_SIZING="-Xms64m -Xmx512m -XX:MetaspaceSize=128M -XX:MaxMetaspaceSize=512m"
+
+rc_reload() {
+    rc_exec "${cli} command=:reload"
+}
+
+rc_stop() {
+    rc_exec "${cli} command=:shutdown"
+}
+
+rc_cmd $1

@@ -1,0 +1,48 @@
+#! /bin/sh -x
+
+# Run as root to read the new certs!
+# Needs to run after cert renewal. Please restart wildfly afterwards.
+umask 77
+
+OPENSSL=/usr/bin/openssl
+KEYTOOL=/usr/local/jdk-21/bin/keytool
+PASSWORDFILENAME=/home/wildfly/062_keytoolpassword
+PRIVATE_KEY=/etc/ssl/private/cancor.planlibre.de.key
+FULLCHAIN=/etc/ssl/cancor.planlibre.de.fullchain.pem
+KEYALIAS=server
+OPENSSLOUTFILE=/home/wildfly/importkeystore.pkcs12
+WILDFLYKEYSTORE=/home/wildfly/.keystore
+WILDFLYKEYSTORE=/home/wildfly/wildfly-16.0.0.Final/standalone/configuration/application.keystore
+WILDFLYKEYSTORE=/home/wildfly/wildfly-26.0.1.Final/standalone/configuration/application.keystore
+WILDFLYKEYSTORE=/home/wildfly/wildfly-34.0.0.Final/standalone/configuration/application.keystore
+
+/usr/bin/touch ${PASSWORDFILENAME} ${OPENSSLOUTFILE} ${WILDFLYKEYSTORE}
+/bin/chmod 600 ${PASSWORDFILENAME} ${OPENSSLOUTFILE} ${WILDFLYKEYSTORE}
+
+${OPENSSL} pkcs12 -inkey ${PRIVATE_KEY} \
+    -password file:${PASSWORDFILENAME} \
+    -in ${FULLCHAIN} \
+    -export -name ${KEYALIAS} -out ${OPENSSLOUTFILE}
+
+${KEYTOOL} -storepass:file ${PASSWORDFILENAME} \
+    -delete -alias ${KEYALIAS} -keystore ${WILDFLYKEYSTORE}
+${KEYTOOL} -storepass:file ${PASSWORDFILENAME} \
+    -srcstorepass:file ${PASSWORDFILENAME} \
+    -importkeystore \
+    -srckeystore ${OPENSSLOUTFILE} \
+    -srcstoretype PKCS12 \
+    -keystore ${WILDFLYKEYSTORE}
+#     -srcstorepass `cat ${PASSWORDFILENAME}` \
+
+/bin/chmod 400 ${PASSWORDFILENAME} ${OPENSSLOUTFILE} ${WILDFLYKEYSTORE}
+/sbin/chown wildfly:wildfly ${WILDFLYKEYSTORE}
+
+# Another common way to start wildfly:
+# su - wildfly
+# ./wildfly-16.0.0.Final/bin/standalone.sh >wildfly.out 2>&1
+# or: /etc/init.d/wildfly restart
+# or: ~/wildfly-16.0.0.Final/bin/jboss.cli restart
+
+# Local Variables:
+# compile-command: "sh -c ~/bin/import-cert "
+# End:

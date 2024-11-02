@@ -1,0 +1,3 @@
+40 5 * * * (umask 77; PGUSER=postgres pg_dumpall --globals-only >globals.sql)
+42 5 * * * (umask 77; PGUSER=postgres pg_dump -Z 9 wroller >wroller.sql.gz)
+

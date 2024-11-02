@@ -1,0 +1,39 @@
+# <datasource jta="false" jndi-name="java:/RollerDS" pool-name="WRollerDS" enabled="true">
+#     <connection-url>jdbc:postgresql://localhost:5432/wroller</connection-url>
+#     <driver>postgresql</driver>
+#     <security>
+#         <user-name>wroller</user-name>
+#         <password>***</password>
+#     </security>
+#     <validation>
+#         <check-valid-connection-sql>SELECT 1;</check-valid-connection-sql>
+#         <validate-on-match>true</validate-on-match>
+#         <background-validation-millis>60000</background-validation-millis>
+#     </validation>
+# </datasource>
+
+batch
+
+module add --name=org.postgresql --resources=postgresql-42.7.4.jar  --dependencies=javax.api,javax.transaction.api
+# /subsystem=datasources/jdbc-driver=postgresql:add(driver-name="postgresql",driver-module-name="org.postgres",driver-class-name=org.postgresql.Driver)
+/subsystem=datasources/jdbc-driver=postgresql:add(driver-name=postgresql,driver-module-name=org.postgresql,driver-xa-datasource-class-name=org.postgresql.xa.PGXADataSource)
+# /subsystem=datasources/jdbc-driver=postgresql:add(driver-name="postgresql",driver-module-name="org.postgresql")
+
+data-source add --jndi-name=java:/RollerDS --name=RollerPool --connection-url=jdbc:postgresql://localhost:5432/wroller --driver-name=postgresql --user-name=${rollerdbuser:roller} --password=${rollerdbpassword:***} --check-valid-connection-sql="SELECT 1;"
+
+#/subsystem=datasources/data-source=PostgrePool/:write-attribute(name=max-pool-size,value=50)
+#/subsystem=datasources/data-source=PostgrePool/:write-attribute(name=max-pool-size,value=10)
+
+run-batch
+
+reload
+
+# "check-valid-connection-sql" => "SELECT 1;",
+# "connection-url" => "jdbc:postgresql://localhost:5432/wroller",
+# "driver-name" => "postgresql",
+# "enabled" => true,
+# "enlistment-trace" => true,
+# "jndi-name" => "java:/RollerDS",
+# "jta" => false,
+# "password" => "***",
+# "user-name" => "wroller",

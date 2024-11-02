@@ -1,0 +1,4 @@
+/system-property=jboss.bind.address:add(value="0.0.0.0")
+
+module add --name=org.apache.roller.configuration --slot=main --module-xml=module.xml --resources=hibernate.cfg.xml:roller-custom.properties
+reload

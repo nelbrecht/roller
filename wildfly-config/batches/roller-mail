@@ -1,0 +1,11 @@
+batch
+# /socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=RollerSMTP:add( host=mail.plan-libre.de, port=465)
+/socket-binding-group=standard-sockets/remote-destination-outbound-socket-binding=RollerSMTP:add( host=mail.plan-libre.de, port=587)
+
+/subsystem=mail/mail-session=RollerMail:add(jndi-name="java:/RollerMail", from="roller@plan-libre.de", debug=true)
+
+/subsystem=mail/mail-session=RollerMail/server=smtp:add( outbound-socket-binding-ref=RollerSMTP, tls=true, username=wildfly, password="${wildflysmtppassword:***}")
+# change with e.g. /subsystem=mail/mail-session=RollerMail/server=smtp:write-attribute(name=username,value="wildfly")
+
+run-batch
+reload
