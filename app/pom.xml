@@ -821,6 +821,35 @@ limitations under the License.
                 </configuration>
             </plugin>
 
+            <plugin>
+                <groupId>org.eclipse.transformer</groupId>
+                <artifactId>transformer-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <rules>
+                        <stripSignatures>true</stripSignatures>
+                        <jakartaDefaults>true</jakartaDefaults>
+                        <overwrite>true</overwrite>
+                    </rules>
+                    <detail>true</detail>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <artifact>
+                                <groupId>org.apache.roller</groupId>
+                                <artifactId>roller-webapp</artifactId>
+                            </artifact>
+                            <classifier>transformed</classifier>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
 
         <testResources>
