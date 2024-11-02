@@ -107,15 +107,16 @@ limitations under the License.
             <artifactId>javax.activation</artifactId>
             <version>${java-activation.version}</version>
         </dependency>
-	<dependency>
+
+        <dependency>
             <groupId>org.reactivestreams</groupId>
             <artifactId>reactive-streams</artifactId>
-            <version>1.0.3</version>
+            <version>1.0.4</version>
         </dependency>
-	<dependency>
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
-            <version>1.21</version>
+            <version>1.27.1</version>
         </dependency>
 
         <dependency>
